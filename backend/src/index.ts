@@ -187,6 +187,13 @@ app.post(
       return;
     }
 
+    if (!hasTripKey(request, trialId, traveller)) {
+      response
+        .status(403)
+        .json({ error: "Open your assigned traveller link." });
+      return;
+    }
+
     try {
       await db.execute(
         `UPDATE trips
