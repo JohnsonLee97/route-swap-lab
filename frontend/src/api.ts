@@ -40,11 +40,15 @@ export function getTrial(id: string | number, signal: AbortSignal) {
   );
 }
 
-export function createTrial(routeAId: number, routeBId: number) {
+export function createTrial(
+  routeAId: number,
+  routeBId: number,
+  previousTrialId: number | null = null,
+) {
   return request<CreatedTrial>("/api/trials", "Could not create trial.", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ routeAId, routeBId }),
+    body: JSON.stringify({ routeAId, routeBId, previousTrialId }),
   });
 }
 

@@ -102,14 +102,22 @@ export function useTrial() {
     };
   }, [trialId, selectedTraveller, isLoadingTrial, isBusy, bothArrived]);
 
-  async function createTrial(routeA: Route, routeB: Route) {
+  async function createTrial(
+    routeA: Route,
+    routeB: Route,
+    previousTrialId: number | null = null,
+  ) {
     if (isLoadingTrial || isBusy || routeA.id === routeB.id) return;
 
     setIsSaving(true);
     setTrialMessage("");
 
     try {
-      const result = await api.createTrial(routeA.id, routeB.id);
+      const result = await api.createTrial(
+        routeA.id,
+        routeB.id,
+        previousTrialId,
+      );
       sessionStorage.setItem(`trial:${result.id}:A`, result.tripKeys.A);
       sessionStorage.setItem(`trial:${result.id}:B`, result.tripKeys.B);
 
@@ -128,6 +136,7 @@ export function useTrial() {
       });
       setTripError("");
       setTrialMessage(`Trial #${result.id} created.`);
+      return true;
     } catch (error) {
       setTrialMessage(
         error instanceof Error ? error.message : "Could not create trial.",

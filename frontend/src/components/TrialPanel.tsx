@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Traveller, Trial } from "../types";
+import { RematchComparison } from "./RematchComparison";
 
 type TrialPanelProps = {
   trial: Trial;
@@ -205,6 +206,16 @@ export function TrialPanel({
           )}
         </div>
       )}
+
+      {selectedTraveller === null &&
+        bothArrived &&
+        trial.previousTrialId != null && (
+          <RematchComparison
+            key={trial.id}
+            originalId={trial.previousTrialId}
+            rematch={trial}
+          />
+        )}
     </section>
   );
 }

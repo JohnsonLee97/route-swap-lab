@@ -74,7 +74,7 @@ app.get("/api/routes", async (_request, response) => {
 });
 
 app.post("/api/trials", async (request, response) => {
-  const { routeAId, routeBId } = request.body ?? {};
+  const { routeAId, routeBId, previousTrialId = null } = request.body ?? {};
 
   if (
     !Number.isSafeInteger(routeAId) ||
@@ -87,21 +87,45 @@ app.post("/api/trials", async (request, response) => {
     return;
   }
 
+  if (
+    previousTrialId !== null &&
+    (!Number.isSafeInteger(previousTrialId) ||
+      previousTrialId < 1 ||
+      previousTrialId > 4_294_967_295)
+  ) {
+    response.status(400).json({ error: "Invalid original trial ID." });
+    return;
+  }
+
   try {
     const [result] = await db.execute<ResultSetHeader>(
-      `INSERT INTO trials (route_a_id, route_b_id)
-       SELECT a.id, b.id
-       FROM routes AS a
-       JOIN routes AS b
-         ON a.origin = b.origin AND a.destination = b.destination
-       WHERE a.id = ? AND b.id = ?`,
-      [routeAId, routeBId],
+      `INSERT INTO trials (route_a_id, route_b_id, previous_trial_id)
+      SELECT a.id, b.id, original.id
+      FROM routes AS a
+      JOIN routes AS b
+        ON a.origin = b.origin AND a.destination = b.destination
+      LEFT JOIN trials AS original ON original.id = ?
+      WHERE a.id = ? AND b.id = ?
+        AND (
+          ? IS NULL OR (
+            original.route_a_id = b.id
+            AND original.route_b_id = a.id
+            AND (
+              SELECT COUNT(*)
+              FROM trips
+              WHERE trial_id = original.id AND arrived_at IS NOT NULL
+            ) = 2
+          )
+        )`,
+      [previousTrialId, routeAId, routeBId, previousTrialId],
     );
 
     if (result.affectedRows === 0) {
       response.status(400).json({
         error:
-          "Choose two existing routes with the same start and destination.",
+          previousTrialId === null
+            ? "Choose two existing routes with the same start and destination."
+            : "A rematch must reverse the routes of a completed trial.",
       });
       return;
     }
@@ -242,6 +266,7 @@ app.get("/api/trials/:id", async (request, response) => {
     const [rows] = await db.execute<RowDataPacket[]>(
       `SELECT
          t.id,
+         t.previous_trial_id AS previousTrialId,
          t.route_a_id AS routeAId,
          t.route_b_id AS routeBId,
          a.name AS routeA,
@@ -268,6 +293,7 @@ app.get("/api/trials/:id", async (request, response) => {
 
     response.json({
       id: trial.id,
+      previousTrialId: trial.previousTrialId,
       routeAId: trial.routeAId,
       routeBId: trial.routeBId,
       travellers: {

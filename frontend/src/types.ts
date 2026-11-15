@@ -18,4 +18,5 @@ export type Trial = {
   routeAId: number;
   routeBId: number;
   travellers: Record<Traveller, Trip>;
+  previousTrialId?: number | null;
 };

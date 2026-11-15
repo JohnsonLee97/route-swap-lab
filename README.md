@@ -46,6 +46,11 @@ CREATE TABLE trials (
   CHECK (route_a_id <> route_b_id)
 );
 
+ALTER TABLE trials
+  ADD COLUMN previous_trial_id INT UNSIGNED NULL,
+  ADD CONSTRAINT fk_trials_previous_trial
+    FOREIGN KEY (previous_trial_id) REFERENCES trials(id);
+
 CREATE TABLE trips (
   trial_id INT UNSIGNED NOT NULL,
   traveller ENUM('A', 'B') NOT NULL,

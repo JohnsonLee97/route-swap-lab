@@ -11,6 +11,7 @@ export default function App() {
   const [routes, setRoutes] = useState<Route[] | null>(null);
   const [routeError, setRouteError] = useState(false);
   const [routeIds, setRouteIds] = useState({ A: "", B: "" });
+  const [previousTrialId, setPreviousTrialId] = useState<number | null>(null);
   const setupHeading = useRef<HTMLHeadingElement>(null);
   const {
     trial,
@@ -41,11 +42,13 @@ export default function App() {
   }, []);
 
   function changeRoute(traveller: Traveller, id: string) {
+    setPreviousTrialId(null);
     setRouteIds((previous) => ({ ...previous, [traveller]: id }));
   }
 
   function swapRoutes() {
     if (trial === null) return;
+    setPreviousTrialId(trial.id);
     setRouteIds({ A: String(trial.routeBId), B: String(trial.routeAId) });
     setupHeading.current?.focus();
   }
@@ -122,7 +125,14 @@ export default function App() {
                 routes={routes}
                 routeIds={routeIds}
                 onRouteChange={changeRoute}
-                onCreate={createTrial}
+                onCreate={async (routeA, routeB) => {
+                  const created = await createTrial(
+                    routeA,
+                    routeB,
+                    previousTrialId,
+                  );
+                  if (created) setPreviousTrialId(null);
+                }}
                 isBusy={isBusy || isLoadingTrial}
                 isSaving={isSaving}
               />
