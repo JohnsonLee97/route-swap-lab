@@ -48,14 +48,17 @@ body {
   margin: 0;
   line-height: 1.1;
 }
+
 .route-app h1 {
   font-size: clamp(2.15rem, 5.6vw, 4.4rem);
   letter-spacing: -0.065em;
 }
+
 .route-app h2 {
   font-size: clamp(1.35rem, 3vw, 1.8rem);
   letter-spacing: -0.035em;
 }
+
 .route-panel {
   margin-top: 1.15rem;
   border: 1px solid var(--panel-border, var(--line));
@@ -71,6 +74,7 @@ body {
   gap: 0.85rem;
   margin-top: 1rem;
 }
+
 .route-grid > :only-child {
   grid-column: 1 / -1;
 }
@@ -94,14 +98,17 @@ body {
   opacity: 0.55;
   cursor: default;
 }
+
 .route-app .route-primary {
   background: #405ab2;
   color: #fff;
 }
+
 .route-app :focus-visible {
   outline: 2px solid #b3c8ff;
   outline-offset: 3px;
 }
+
 .route-error {
   color: #ffb4ad;
   margin: 0.65rem 0;

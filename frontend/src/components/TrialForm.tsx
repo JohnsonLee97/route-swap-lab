@@ -1,4 +1,4 @@
-import type { FormEvent } from "react";
+import { useId, useRef, useState, type FormEvent } from "react";
 import type { Route, Traveller } from "../types";
 
 type TrialFormProps = {
@@ -18,6 +18,18 @@ export function TrialForm({
   isBusy,
   isSaving,
 }: TrialFormProps) {
+  const pickerId = useId();
+  const [openTraveller, setOpenTraveller] = useState<Traveller | null>(null);
+  const triggers = useRef<Record<Traveller, HTMLButtonElement | null>>({
+    A: null,
+    B: null,
+  });
+
+  function closePicker(traveller: Traveller) {
+    setOpenTraveller(null);
+    triggers.current[traveller]?.focus();
+  }
+
   const routeA = routes.find((route) => String(route.id) === routeIds.A);
   const routeB = routes.find((route) => String(route.id) === routeIds.B);
   const sameRoute = routeA !== undefined && routeA.id === routeB?.id;
@@ -25,6 +37,7 @@ export function TrialForm({
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (isBusy || !routeA || !routeB || sameRoute) return;
+    setOpenTraveller(null);
     void onCreate(routeA, routeB);
   }
 
@@ -33,33 +46,93 @@ export function TrialForm({
       <div className="route-grid">
         {(["A", "B"] as const).map((traveller) => {
           const route = traveller === "A" ? routeA : routeB;
+          const isOpen = openTraveller === traveller;
+          const labelId = `${pickerId}-label-${traveller}`;
+          const triggerId = `${pickerId}-trigger-${traveller}`;
+          const optionsId = `${pickerId}-options-${traveller}`;
+
           return (
             <div
               className="route-choice"
               data-traveller={traveller}
               key={traveller}
+              onKeyDown={(event) => {
+                if (event.key === "Escape" && isOpen) {
+                  event.preventDefault();
+                  closePicker(traveller);
+                }
+              }}
             >
-              <label htmlFor={`route-${traveller}`}>
+              <h3 className="route-choice-label" id={labelId}>
                 <span className="route-letter" aria-hidden="true">
                   {traveller}
                 </span>
                 Traveller {traveller}
-              </label>
-              <select
-                id={`route-${traveller}`}
-                value={routeIds[traveller]}
-                onChange={(event) =>
-                  onRouteChange(traveller, event.target.value)
-                }
-                disabled={isBusy}
+              </h3>
+              <div
+                className="route-picker-control"
+                data-has-selection={Boolean(route)}
               >
-                <option value="">Select a route</option>
-                {routes.map((option) => (
-                  <option key={option.id} value={option.id}>
-                    {option.name}
-                  </option>
-                ))}
-              </select>
+                <button
+                  className="route-picker-trigger"
+                  type="button"
+                  id={triggerId}
+                  ref={(button) => {
+                    triggers.current[traveller] = button;
+                  }}
+                  aria-labelledby={`${labelId} ${triggerId}`}
+                  aria-expanded={isOpen}
+                  aria-controls={optionsId}
+                  disabled={isBusy}
+                  onClick={() => setOpenTraveller(isOpen ? null : traveller)}
+                >
+                  <span>{route?.name ?? "Select a route"}</span>
+                  <span className="route-picker-chevron" aria-hidden="true" />
+                </button>
+                {route && (
+                  <button
+                    className="route-picker-clear"
+                    type="button"
+                    aria-label={`Clear Traveller ${traveller}’s route`}
+                    disabled={isBusy}
+                    onClick={() => {
+                      onRouteChange(traveller, "");
+                      closePicker(traveller);
+                    }}
+                  >
+                    <span aria-hidden="true">×</span>
+                  </button>
+                )}
+              </div>
+
+              <ul
+                className="route-picker-options"
+                id={optionsId}
+                hidden={!isOpen}
+              >
+                {routes.map((option) => {
+                  const id = String(option.id);
+                  const isSelected = routeIds[traveller] === id;
+
+                  return (
+                    <li key={option.id}>
+                      <button
+                        className="route-picker-option"
+                        type="button"
+                        aria-pressed={isSelected}
+                        disabled={isBusy}
+                        onClick={() => {
+                          if (!isSelected) onRouteChange(traveller, id);
+                          closePicker(traveller);
+                        }}
+                      >
+                        <span>{option.name}</span>
+                        {isSelected && <span aria-hidden="true">✓</span>}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
               {route?.origin && route.destination && (
                 <p className="route-endpoints">
                   {route.origin} <span aria-hidden="true">→</span>{" "}

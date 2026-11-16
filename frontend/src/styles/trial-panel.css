@@ -32,6 +32,7 @@
   margin: 0 0 0.3rem;
   font-size: 0.82rem;
 }
+
 .route-trip-heading h3,
 .route-bar > span {
   overflow-wrap: anywhere;
@@ -45,10 +46,12 @@
   margin: 1rem 0;
   padding: 0;
 }
+
 .route-progress li {
   color: var(--muted);
   font-size: 0.77rem;
 }
+
 .route-progress li::before {
   content: "";
   display: block;
@@ -57,27 +60,33 @@
   border-radius: 1rem;
   background: #405475;
 }
+
 .route-progress li[data-reached="true"]::before {
   background: var(--tone);
 }
+
 .route-progress [aria-current="step"] {
   color: var(--tone);
   font-weight: 800;
 }
+
 .route-app .route-trip-button,
 .route-app .route-quiet {
   background: var(--tone-bg);
   color: var(--tone);
 }
+
 .route-app .route-quiet {
   min-height: 2.3rem;
   font-size: 0.84rem;
 }
+
 .route-invite {
   margin-top: 0.95rem;
   border-top: 1px solid var(--line);
   padding-top: 0.8rem;
 }
+
 .route-invite a {
   color: #c2d3ff;
   font-size: 0.84rem;
@@ -91,23 +100,27 @@
   letter-spacing: -0.04em;
   font-variant-numeric: tabular-nums;
 }
+
 .route-result {
   margin-top: 1rem;
   padding: 1rem;
   background: #24385b;
   border-radius: 0.95rem;
 }
+
 .route-bars {
   display: grid;
   gap: 0.75rem;
   margin-top: 0.9rem;
 }
+
 .route-bar {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 0.3rem 0.75rem;
   font-size: 0.9rem;
 }
+
 .route-bar-track {
   grid-column: 1 / -1;
   height: 0.45rem;
@@ -115,12 +128,33 @@
   overflow: hidden;
   background: #12213a;
 }
+
 .route-bar-track span {
   display: block;
   height: 100%;
   background: var(--tone);
   border-radius: inherit;
 }
+
 .route-result > button {
   margin-top: 1rem;
+}
+
+.route-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+  min-height: 44px;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  color: var(--ink);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.route-back-link:hover {
+  background: var(--control-bg);
 }

@@ -4,6 +4,7 @@ import { TrialForm } from "./components/TrialForm";
 import { TrialPanel } from "./components/TrialPanel";
 import { useTrial } from "./hooks/useTrial";
 import type { Route, Traveller } from "./types";
+import { BackToTrialLink } from "./components/BackToTrialLink";
 import "./route-swap.css";
 
 export default function App() {
@@ -157,6 +158,10 @@ export default function App() {
             onUpdateTrip={updateTrip}
             onSwap={swapRoutes}
           />
+        )}
+
+        {trial && selectedTraveller !== null && (
+          <BackToTrialLink trialId={trial.id} />
         )}
 
         {trialMessage && (

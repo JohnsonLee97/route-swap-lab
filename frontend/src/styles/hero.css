@@ -60,6 +60,7 @@
   border-radius: 1.5rem;
   overflow: hidden;
 }
+
 .route-hero p {
   color: #dbe5f9;
   max-width: 37ch;
@@ -89,12 +90,14 @@
   color: #ffc498;
   margin-left: 10%;
 }
+
 .route-map-track::before {
   content: "";
   position: absolute;
   inset: 50% 0 auto;
   border-top: 0.22rem solid;
 }
+
 .route-map-track span,
 .route-map-track i {
   position: relative;
