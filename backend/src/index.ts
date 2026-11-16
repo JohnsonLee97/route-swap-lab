@@ -7,6 +7,7 @@ import {
 import express from "express";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import type { Request } from "express";
+import { resolve } from "node:path";
 
 const app = express();
 
@@ -315,6 +316,12 @@ app.get("/api/trials/:id", async (request, response) => {
   }
 });
 
-app.listen(3001, "127.0.0.1", () => {
-  console.log("Route Swap Lab API running at http://127.0.0.1:3001");
+const frontendDist = resolve(__dirname, "../../frontend/dist");
+app.use(express.static(frontendDist));
+
+const port = Number(process.env.PORT ?? "3001");
+const host = process.env.HOST ?? "127.0.0.1";
+
+app.listen(port, host, () => {
+  console.log(`Route Swap Lab listening on ${host}:${port}`);
 });
