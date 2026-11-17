@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Traveller, Trial } from "../types";
 import { RematchComparison } from "./RematchComparison";
-import { BackToTrialLink } from "./BackToTrialLink";
+// import { BackToTrialLink } from "./BackToTrialLink";
 
 type TrialPanelProps = {
   trial: Trial;
@@ -57,8 +57,7 @@ export function TrialPanel({
   return (
     <section className="route-panel" aria-labelledby="active-trial-heading">
       <div className="route-panel-heading">
-        <h2 id="active-trial-heading">Trial #{trial.id}</h2>
-        {selectedTraveller !== null && <BackToTrialLink trialId={trial.id} />}
+        <h2 id="active-trial-heading">Trial</h2>
         {selectedTraveller === null && (
           <span className="route-status">
             {bothArrived ? "Complete" : "Auto-updating"}
