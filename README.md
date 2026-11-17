@@ -106,6 +106,16 @@ npm run dev
 
 Open [Route Swap Lab](http://localhost:5174/). Vite forwards `/api` requests to Express on port `3001`. To check the database connection, open [`/api/db-health`](http://localhost:5174/api/db-health).
 
+## View trip times and route comparisons in VS Code
+
+The repository includes a SQLTools connection for the local MySQL database and a query that shows each traveller’s route and trip time, the time difference between them, and which trial each rematch belongs to.
+
+1. Install **SQLTools** (`mtxr.sqltools`) and the **MySQL/MariaDB/TiDB driver** (`mtxr.sqltools-driver-mysql`) in your WSL VS Code window.
+2. Connect to **Route Swap Lab Local** in the SQLTools sidebar. When prompted, enter the MySQL password you set for `route_swap_app`.
+3. Open `Route Swap Lab Local.session.sql`, select the query, and run **SQLTools: Run Query** from the Command Palette.
+
+Results are sorted by trial ID, oldest first. The time difference appears once both travellers have marked their arrival.
+
 ## Current status
 
 The app is configured for local development.
